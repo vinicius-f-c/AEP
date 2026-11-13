@@ -10,7 +10,8 @@ public final class Endereco implements Validavel {
     private String cidade;
     private String uf;
 
-    public Endereco() {
+ 
+      public Endereco() {
     }
 
     public Endereco(String cep, String logradouro, String numero, String complemento,
