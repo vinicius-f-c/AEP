@@ -1,3 +1,4 @@
+
 package br.edu.ads.reciclagem.modelo;
 
 import java.time.LocalDateTime;
