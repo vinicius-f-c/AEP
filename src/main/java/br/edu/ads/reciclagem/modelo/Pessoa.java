@@ -11,6 +11,7 @@ public abstract class Pessoa extends EntidadeBase {
     protected Pessoa() {
     }
 
+
     protected Pessoa(Long id, LocalDateTime dataCadastro,
                      String nomeCompleto, String email, String telefone) {
         super(id, dataCadastro);
