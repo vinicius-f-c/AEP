@@ -10,8 +10,7 @@ public final class Endereco implements Validavel {
     private String cidade;
     private String uf;
 
- 
-      public Endereco() {
+    public Endereco() {
     }
 
     public Endereco(String cep, String logradouro, String numero, String complemento,
@@ -65,9 +64,7 @@ public final class Endereco implements Validavel {
         this.bairro = bairro;
     }
 
-    
-
-      public String getCidade() {
+    public String getCidade() {
         return cidade;
     }
 
@@ -75,8 +72,7 @@ public final class Endereco implements Validavel {
         this.cidade = cidade;
     }
 
-  
-     public String getUf() {
+    public String getUf() {
         return uf;
     }
 
@@ -89,10 +85,11 @@ public final class Endereco implements Validavel {
         if (cep == null || !cep.matches("\\d{8}")) {
             throw new IllegalArgumentException("CEP inválido (use 8 dígitos).");
         }
-        exigir(logradouro, "Logradouro");
-        exigir(numero, "Número");
-        exigir(bairro, "Bairro");
-        exigir(cidade, "Cidade");
+        Validacao.exigir(logradouro, "Logradouro", 150);
+        Validacao.exigir(numero, "Número", 10);
+        Validacao.opcional(complemento, "Complemento", 80);
+        Validacao.exigir(bairro, "Bairro", 80);
+        Validacao.exigir(cidade, "Cidade", 80);
         if (uf == null || !uf.matches("[A-Z]{2}")) {
             throw new IllegalArgumentException("UF inválida (use 2 letras).");
         }
@@ -107,11 +104,5 @@ public final class Endereco implements Validavel {
         sb.append(" - ").append(bairro).append(", ").append(cidade).append("/").append(uf);
         sb.append(" - CEP ").append(cep);
         return sb.toString();
-    }
-
-    private static void exigir(String valor, String campo) {
-        if (valor == null || valor.isBlank()) {
-            throw new IllegalArgumentException(campo + " é obrigatório.");
-        }
     }
 }

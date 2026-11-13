@@ -1,5 +1,6 @@
 package br.edu.ads.reciclagem.servico;
 
+import br.edu.ads.reciclagem.modelo.EstadoConservacao;
 import br.edu.ads.reciclagem.modelo.ItemEletronico;
 import br.edu.ads.reciclagem.modelo.StatusRastreamento;
 import br.edu.ads.reciclagem.repositorio.DoadorDAO;
@@ -28,6 +29,28 @@ public class ItemEletronicoService {
             throw new RegraNegocioException("Doador não encontrado (id " + item.getDoadorId() + ").");
         }
         return itemDAO.salvar(item);
+    }
+
+    public ItemEletronico atualizarDados(Long itemId, String tipo, String marca, String modelo,
+                                         EstadoConservacao estado) throws PersistenciaException {
+        ItemEletronico item = buscarPorId(itemId);
+        if (!item.podeSerEditado()) {
+            throw new RegraNegocioException("Item já coletado (status: " + item.getStatusRastreamento()
+                    + "). Só é possível corrigir os dados de itens aguardando coleta.");
+        }
+        item.setTipoEquipamento(tipo);
+        item.setMarca(marca);
+        item.setModelo(modelo);
+        item.setEstadoConservacao(estado);
+        item.validar();
+        if (!itemDAO.atualizarDadosSeNaoColetado(item)) {
+            throw new RegraNegocioException("O item não pôde ser atualizado porque o status mudou.");
+        }
+        return item;
+    }
+
+    public List<ItemEletronico> listar() throws PersistenciaException {
+        return itemDAO.listarTodos();
     }
 
     public ItemEletronico atualizarStatus(Long itemId, StatusRastreamento novoStatus)

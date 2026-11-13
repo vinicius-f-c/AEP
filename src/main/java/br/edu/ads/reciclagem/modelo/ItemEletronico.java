@@ -84,14 +84,19 @@ public class ItemEletronico extends EntidadeBase {
         return statusRastreamento != null && statusRastreamento.permiteExclusao();
     }
 
+    /** Os dados cadastrais só podem ser corrigidos enquanto o item não foi coletado. */
+    public boolean podeSerEditado() {
+        return podeSerExcluido();
+    }
+
     @Override
     public void validar() {
         if (doadorId == null) {
             throw new IllegalArgumentException("O item precisa estar vinculado a um doador.");
         }
-        exigir(tipoEquipamento, "Tipo de equipamento");
-        exigir(marca, "Marca");
-        exigir(modelo, "Modelo");
+        Validacao.exigir(tipoEquipamento, "Tipo de equipamento", 60);
+        Validacao.exigir(marca, "Marca", 60);
+        Validacao.exigir(modelo, "Modelo", 80);
         if (estadoConservacao == null) {
             throw new IllegalArgumentException("Estado de conservação é obrigatório.");
         }
@@ -104,11 +109,5 @@ public class ItemEletronico extends EntidadeBase {
     public String descricaoResumida() {
         return "#" + getId() + " " + tipoEquipamento + " " + marca + " " + modelo
                 + " [" + statusRastreamento + "]";
-    }
-
-    private static void exigir(String valor, String campo) {
-        if (valor == null || valor.isBlank()) {
-            throw new IllegalArgumentException(campo + " é obrigatório.");
-        }
     }
 }

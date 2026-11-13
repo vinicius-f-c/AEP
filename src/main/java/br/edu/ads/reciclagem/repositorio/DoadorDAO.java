@@ -69,6 +69,9 @@ public class DoadorDAO implements Repositorio<Doador> {
                 throw new PersistenciaException("Doador não encontrado para atualização.");
             }
         } catch (SQLException e) {
+            if (e.getErrorCode() == 1062) {
+                throw new PersistenciaException("Já existe outro doador cadastrado com este e-mail.", e);
+            }
             throw new PersistenciaException("Erro ao atualizar doador: " + e.getMessage(), e);
         }
     }
@@ -80,6 +83,10 @@ public class DoadorDAO implements Repositorio<Doador> {
             ps.setLong(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
+            if (e.getErrorCode() == 1451) {
+                throw new PersistenciaException("Não é possível excluir: o doador possui itens "
+                        + "eletrônicos registrados (o histórico de descartes é preservado).", e);
+            }
             throw new PersistenciaException("Erro ao excluir doador: " + e.getMessage(), e);
         }
     }

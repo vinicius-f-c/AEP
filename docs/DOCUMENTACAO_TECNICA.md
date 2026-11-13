@@ -45,6 +45,7 @@ Classe `br.edu.ads.reciclagem.infra.ConexaoBancoDados`. Abre uma conexão JDBC r
 | Classe / interface | Papel |
 |---|---|
 | `Validavel` (interface) | contrato com o método `validar()` |
+| `Validacao` (utilitária) | regras de obrigatoriedade e tamanho máximo das colunas |
 | `EntidadeBase` (abstrata) | superclasse com `id` e `dataCadastro`; declara `descricaoResumida()` |
 | `Pessoa` (abstrata) | estende `EntidadeBase`; nome, e-mail e telefone |
 | `Doador` | estende `Pessoa`; acrescenta `Endereco` |
@@ -63,17 +64,38 @@ Polimorfismo: `validar()` e `descricaoResumida()` são sobrescritos em cada subc
 | `repositorio` | `DoadorDAO`, `ItemEletronicoDAO`, `PersistenciaException` |
 | `servico` | regras de negócio (`DoadorService`, `ItemEletronicoService`) |
 | `controlador` | `EcoTechController` |
-| `visao` | `ConsoleView` (menu de console) |
+| `visao` | `ConsoleView` (menu de console) e `EntradaEncerradaException` |
 
-## 5. Requisitos e onde são atendidos
+## 5. CRUD e requisitos
+
+### CRUD por entidade
+
+| Entidade | Create | Read | Update | Delete |
+|---|---|---|---|---|
+| Doador | 1 - `DoadorService.cadastrar` | 2, 3 - `listar`, `buscarPorId` | 4 - `atualizar` | 5 - `excluir` (bloqueada se houver itens) |
+| Item eletrônico | 6 - `registrar` | 7, 8, 11 - `listar`, `buscarPorId`, `consultarHistorico` | 9 - `atualizarDados`; 10 - `atualizarStatus` | 12 - `excluirNaoColetado` |
+
+### Requisitos do escopo
 
 | # | Requisito | Opção do menu | Onde |
 |---|---|---|---|
 | 1 | Cadastro de doadores | 1 | `DoadorService.cadastrar` / `DoadorDAO.salvar` |
-| 2 | Registro de itens para descarte | 3 | `ItemEletronicoService.registrar` / `ItemEletronicoDAO.salvar` |
-| 3 | Atualização do status de rastreamento | 4 | `ItemEletronicoService.atualizarStatus` (o status só avança) |
-| 4 | Histórico de descartes de um doador | 5 | `ItemEletronicoDAO.listarPorDoador` |
-| 5 | Exclusão de item ainda não coletado | 6 | `ItemEletronicoDAO.excluirSeNaoColetado` (só `AGUARDANDO_COLETA`) |
+| 2 | Registro de itens para descarte | 6 | `ItemEletronicoService.registrar` / `ItemEletronicoDAO.salvar` |
+| 3 | Atualização do status de rastreamento | 10 | `ItemEletronicoService.atualizarStatus` (o status só avança) |
+| 4 | Histórico de descartes de um doador | 11 | `ItemEletronicoDAO.listarPorDoador` |
+| 5 | Exclusão de item ainda não coletado | 12 | `ItemEletronicoDAO.excluirSeNaoColetado` (só `AGUARDANDO_COLETA`) |
+
+A correção de dados do item (opção 9) usa `atualizarDadosSeNaoColetado`, com a mesma condição de status no próprio `UPDATE`, o que evita alterar um item que acabou de ser coletado.
+
+## 5.1 Tratamento de exceções
+
+| Exceção | Origem | Tratamento |
+|---|---|---|
+| `IllegalArgumentException` | validações do modelo | exibida ao usuário; nada é gravado |
+| `RegraNegocioException` | camada de serviço | exibida ao usuário |
+| `PersistenciaException` | DAOs (erros de SQL, e-mail duplicado, FK) | exibida ao usuário |
+| `EntradaEncerradaException` | `ConsoleView` (fim da entrada) | encerra o programa normalmente |
+| `RuntimeException` (inesperada) | qualquer camada | mensagem genérica; o menu continua |
 
 ## 6. Como executar
 

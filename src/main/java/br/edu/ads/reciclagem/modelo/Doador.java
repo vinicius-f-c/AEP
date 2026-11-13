@@ -9,8 +9,6 @@ public class Doador extends Pessoa {
     public Doador() {
     }
 
-  
-
     public Doador(String nomeCompleto, String email, String telefone, Endereco endereco) {
         super(null, null, nomeCompleto, email, telefone);
         this.endereco = endereco;

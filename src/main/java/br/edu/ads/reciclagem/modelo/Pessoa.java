@@ -11,7 +11,6 @@ public abstract class Pessoa extends EntidadeBase {
     protected Pessoa() {
     }
 
-
     protected Pessoa(Long id, LocalDateTime dataCadastro,
                      String nomeCompleto, String email, String telefone) {
         super(id, dataCadastro);
@@ -46,10 +45,8 @@ public abstract class Pessoa extends EntidadeBase {
 
     @Override
     public void validar() {
-        if (nomeCompleto == null || nomeCompleto.isBlank()) {
-            throw new IllegalArgumentException("Nome completo é obrigatório.");
-        }
-        if (email == null || !email.matches("^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$")) {
+        Validacao.exigir(nomeCompleto, "Nome completo", 150);
+        if (email == null || email.length() > 150 || !email.matches("^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$")) {
             throw new IllegalArgumentException("E-mail inválido.");
         }
         if (telefone == null || !telefone.replaceAll("\\D", "").matches("\\d{10,11}")) {

@@ -25,6 +25,10 @@ public class ItemEletronicoDAO implements Repositorio<ItemEletronico> {
             "UPDATE item_eletronico SET tipo_equipamento = ?, marca = ?, modelo = ?, "
                     + "estado_conservacao = ?, status_rastreamento = ? WHERE id = ?";
 
+    private static final String SQL_ATUALIZAR_DADOS_NAO_COLETADO =
+            "UPDATE item_eletronico SET tipo_equipamento = ?, marca = ?, modelo = ?, "
+                    + "estado_conservacao = ? WHERE id = ? AND status_rastreamento = 'AGUARDANDO_COLETA'";
+
     private static final String SQL_ATUALIZAR_STATUS =
             "UPDATE item_eletronico SET status_rastreamento = ? WHERE id = ?";
 
@@ -83,6 +87,20 @@ public class ItemEletronicoDAO implements Repositorio<ItemEletronico> {
             }
         } catch (SQLException e) {
             throw new PersistenciaException("Erro ao atualizar item eletrônico: " + e.getMessage(), e);
+        }
+    }
+
+    public boolean atualizarDadosSeNaoColetado(ItemEletronico item) throws PersistenciaException {
+        try (Connection c = conexao.obterConexao();
+             PreparedStatement ps = c.prepareStatement(SQL_ATUALIZAR_DADOS_NAO_COLETADO)) {
+            ps.setString(1, item.getTipoEquipamento());
+            ps.setString(2, item.getMarca());
+            ps.setString(3, item.getModelo());
+            ps.setString(4, item.getEstadoConservacao().name());
+            ps.setLong(5, item.getId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new PersistenciaException("Erro ao atualizar dados do item: " + e.getMessage(), e);
         }
     }
 
