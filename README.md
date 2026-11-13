@@ -33,6 +33,6 @@ O EcoTech é um sistema computacional que conecta usuários interessados em desc
 
 ## Tecnologias
 
-- **Linguagem:** Java (ou C#)
+- **Linguagem:** Java 
 - **Banco de Dados:** MySQL
 - **Padrão Arquitetural:** Camadas (MVC / DAO)
