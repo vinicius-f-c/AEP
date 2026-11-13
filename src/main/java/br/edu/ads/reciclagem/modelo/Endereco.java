@@ -64,7 +64,9 @@ public final class Endereco implements Validavel {
         this.bairro = bairro;
     }
 
-    public String getCidade() {
+    
+
+      public String getCidade() {
         return cidade;
     }
 
@@ -72,7 +74,8 @@ public final class Endereco implements Validavel {
         this.cidade = cidade;
     }
 
-    public String getUf() {
+  
+     public String getUf() {
         return uf;
     }
 
